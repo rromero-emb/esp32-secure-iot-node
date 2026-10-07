@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Build and size report (ESP-IDF v5.5, esp32)
         uses: espressif/esp-idf-ci-action@v1

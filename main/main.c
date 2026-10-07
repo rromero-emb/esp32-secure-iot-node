@@ -51,7 +51,8 @@ static void show_reading(const dht11_reading_t *r)
     }
     char line[SSD1306_TEXT_COLS + 1];
     ssd1306_clear();
-    snprintf(line, sizeof(line), "fw %s", esp_app_get_description()->version);
+    /* 16-column display: keep at most 13 characters of the version string. */
+    snprintf(line, sizeof(line), "fw %.13s", esp_app_get_description()->version);
     ssd1306_draw_text(0, line);
     snprintf(line, sizeof(line), "T  %d C", r->temperature_c);
     ssd1306_draw_text(2, line);
