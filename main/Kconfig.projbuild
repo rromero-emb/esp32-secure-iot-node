@@ -1,0 +1,36 @@
+menu "IoT node hardware"
+
+    config NODE_STATUS_LED_GPIO
+        int "Status LED GPIO"
+        default 2
+        help
+            On-board LED on most ESP32 DevKit boards.
+
+    config NODE_DHT11_GPIO
+        int "DHT11 data GPIO"
+        default 4
+
+    config NODE_IR_SENSOR_GPIO
+        int "IR obstacle sensor output GPIO"
+        default 27
+
+    config NODE_I2C_SDA_GPIO
+        int "OLED I2C SDA GPIO"
+        default 21
+
+    config NODE_I2C_SCL_GPIO
+        int "OLED I2C SCL GPIO"
+        default 22
+
+    config NODE_OLED_I2C_ADDR
+        hex "OLED I2C address"
+        default 0x3C
+
+    config NODE_SENSOR_PERIOD_MS
+        int "Sensor sampling period (ms)"
+        default 5000
+        range 2000 3600000
+        help
+            DHT11 needs at least 1 s between reads; 2 s is a safe minimum.
+
+endmenu

@@ -1,0 +1,31 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and size report (ESP-IDF v5.5, esp32)
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.5
+          target: esp32
+          path: '.'
+          command: idf.py build && idf.py size && idf.py size-components
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-esp32
+          path: |
+            build/esp32-secure-iot-node.bin
+            build/bootloader/bootloader.bin
+            build/partition_table/partition-table.bin
+            build/flasher_args.json
+          if-no-files-found: error

@@ -1,0 +1,10 @@
+# Target: classic ESP32 (ESP-32S / ESP32-WROOM-32 module, 4 MB flash)
+CONFIG_IDF_TARGET="esp32"
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+
+# Two OTA slots from day one, so session 3 (signed OTA + rollback) needs no re-partitioning
+CONFIG_PARTITION_TABLE_TWO_OTA=y
+
+# Fail loudly during development
+CONFIG_COMPILER_STACK_CHECK_MODE_STRONG=y
+CONFIG_ESP_TASK_WDT_PANIC=y
