@@ -60,6 +60,19 @@ idf.py build
 idf.py -p /dev/ttyUSB0 flash monitor
 ```
 
+### Flash a prebuilt image (no toolchain needed)
+
+Every CI run uploads a `firmware-esp32` artifact containing `merged-firmware.bin`.
+Flash it at offset `0x0` from Chrome or Edge with Espressif's [web flasher](https://espressif.github.io/esptool-js/), or with esptool:
+
+```sh
+esptool.py --chip esp32 -p /dev/ttyUSB0 write_flash 0x0 merged-firmware.bin
+```
+
+Then open a serial monitor at 115200 baud.
+
+Spanish working notes: [plan](docs/PLAN.md), [Windows setup](docs/WINDOWS.md), [wiring](docs/MONTAJE.md), [on-board test checklist](docs/PRUEBAS.md).
+
 ## Security notes
 
 - Signed OTA images are verified **without enabling hardware Secure Boot** on the dev board: Secure Boot and Flash Encryption burn eFuses irreversibly. The production configuration is documented instead of applied.

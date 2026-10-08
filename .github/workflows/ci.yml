@@ -17,15 +17,20 @@ jobs:
           esp_idf_version: v5.5
           target: esp32
           path: '.'
-          command: idf.py build && idf.py size && idf.py size-components
+          command: >-
+            idf.py build && idf.py size && idf.py size-components &&
+            cd build && python -m esptool --chip esp32 merge_bin
+            -o merged-firmware.bin @flash_args
 
       - name: Upload firmware
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: firmware-esp32
           path: |
+            build/merged-firmware.bin
             build/esp32-secure-iot-node.bin
             build/bootloader/bootloader.bin
             build/partition_table/partition-table.bin
+            build/ota_data_initial.bin
             build/flasher_args.json
           if-no-files-found: error

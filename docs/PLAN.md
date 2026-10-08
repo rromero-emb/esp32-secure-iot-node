@@ -12,6 +12,17 @@ Se presenta junto a `cra-embedded-linux-demo` con un mensaje común: **arranque 
 3. una OTA firmada se instala, mientras que una imagen sin firmar o corrupta se rechaza y vuelve a la versión anterior;
 4. el consumo en *deep sleep* aparece medido.
 
+## 1b. Flujo de trabajo y documentos
+
+- **Desarrollo:** el código se escribe en Linux y se sube a GitHub; la CI lo compila en cada push.
+- **Pruebas con la placa:** en el PC con Windows, flasheando el binario de la CI desde el navegador o con ESP-IDF instalado. Los logs se ven con el monitor serie del IDE de Arduino.
+
+| Documento | Contenido |
+|---|---|
+| [WINDOWS.md](WINDOWS.md) | Drivers, flasheo web, ESP-IDF en Windows, monitor serie, problemas típicos |
+| [MONTAJE.md](MONTAJE.md) | Cableado de cada módulo del kit y pines a evitar |
+| [PRUEBAS.md](PRUEBAS.md) | Lista de comprobaciones en la placa para cada sesión, con los logs esperados |
+
 ## 2. Decisiones de diseño
 
 | Decisión | Motivo |
