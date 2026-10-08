@@ -1,3 +1,3 @@
-# Session 1: the implementation will add `REQUIRES esp_driver_i2c`.
-idf_component_register(SRCS "ssd1306.c"
-                       INCLUDE_DIRS "include")
+idf_component_register(SRCS "ssd1306.c" "font8x8.c"
+                       INCLUDE_DIRS "include"
+                       PRIV_REQUIRES esp_driver_i2c)

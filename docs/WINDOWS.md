@@ -14,7 +14,7 @@ Este proyecto es **ESP-IDF**, no Arduino: el IDE de Arduino **no lo compila**. A
    - CP210x: Silicon Labs, "CP210x USB to UART Bridge VCP Drivers".
    - CH340: WCH, "CH341SER".
 3. **Apunta el número de puerto COM.** Lo usarás en todos los pasos.
-4. **Montaje:** ver [MONTAJE.md](MONTAJE.md). Para la sesión 0 basta con el sensor IR.
+4. **Montaje:** ver [MONTAJE.md](MONTAJE.md). Para la sesión 0 basta con el PIR.
 
 ## A. Flashear el binario que compila la CI (sin instalar nada)
 

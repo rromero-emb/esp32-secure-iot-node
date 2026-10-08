@@ -6,21 +6,31 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "ir_sensor.h"
 #include "nvs_flash.h"
+#include "presence_sensor.h"
 #include "sdkconfig.h"
 #include "ssd1306.h"
 #include "status_led.h"
 
 static const char *TAG = "node";
 
+#if CONFIG_NODE_PRESENCE_SENSOR_IR
+#define PRESENCE_ACTIVE_LOW true
+#else
+#define PRESENCE_ACTIVE_LOW false
+#endif
+
 static bool s_have_dht11;
 static bool s_have_oled;
 
-static void on_obstacle(bool obstacle, void *ctx)
+static void on_presence(bool present, void *ctx)
 {
     (void)ctx;
-    ESP_LOGI(TAG, "IR sensor: %s", obstacle ? "obstacle" : "clear");
+#if CONFIG_NODE_PRESENCE_SENSOR_PIR
+    ESP_LOGI(TAG, "PIR sensor: %s", present ? "motion" : "idle");
+#else
+    ESP_LOGI(TAG, "IR sensor: %s", present ? "obstacle" : "clear");
+#endif
     /* Session 2: publish as an MQTT event. Session 4: wake-up source. */
 }
 
@@ -68,7 +78,9 @@ void app_main(void)
 
     init_nvs();
     ESP_ERROR_CHECK(status_led_init(CONFIG_NODE_STATUS_LED_GPIO));
-    ESP_ERROR_CHECK(ir_sensor_init(CONFIG_NODE_IR_SENSOR_GPIO, on_obstacle, NULL));
+    ESP_ERROR_CHECK(presence_sensor_init(CONFIG_NODE_PRESENCE_SENSOR_GPIO,
+                                         PRESENCE_ACTIVE_LOW,
+                                         on_presence, NULL));
 
     s_have_dht11 = init_optional("DHT11", dht11_init(CONFIG_NODE_DHT11_GPIO));
     s_have_oled = init_optional("OLED", ssd1306_init(CONFIG_NODE_I2C_SDA_GPIO,

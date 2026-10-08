@@ -1,4 +1,4 @@
-#include "ir_sensor.h"
+#include "presence_sensor.h"
 
 #include <stddef.h>
 
@@ -11,11 +11,12 @@
 
 #define DEBOUNCE_MS 30
 
-static const char *TAG = "ir_sensor";
+static const char *TAG = "presence_sensor";
 
 static QueueHandle_t s_queue;
 static int s_gpio;
-static ir_sensor_cb_t s_cb;
+static int s_active_level;
+static presence_sensor_cb_t s_cb;
 static void *s_ctx;
 
 static void IRAM_ATTR gpio_isr(void *arg)
@@ -29,7 +30,7 @@ static void IRAM_ATTR gpio_isr(void *arg)
     }
 }
 
-static void ir_task(void *arg)
+static void sensor_task(void *arg)
 {
     (void)arg;
     int last = gpio_get_level(s_gpio);
@@ -44,25 +45,28 @@ static void ir_task(void *arg)
         const int level = gpio_get_level(s_gpio);
         if (level != last) {
             last = level;
-            s_cb(level == 0, s_ctx);
+            s_cb(level == s_active_level, s_ctx);
         }
     }
 }
 
-esp_err_t ir_sensor_init(int gpio, ir_sensor_cb_t cb, void *ctx)
+esp_err_t presence_sensor_init(int gpio, bool active_low, presence_sensor_cb_t cb, void *ctx)
 {
     ESP_RETURN_ON_FALSE(cb, ESP_ERR_INVALID_ARG, TAG, "callback required");
 
     s_queue = xQueueCreate(8, sizeof(uint8_t));
     ESP_RETURN_ON_FALSE(s_queue, ESP_ERR_NO_MEM, TAG, "queue alloc failed");
     s_gpio = gpio;
+    s_active_level = active_low ? 0 : 1;
     s_cb = cb;
     s_ctx = ctx;
 
     const gpio_config_t cfg = {
         .pin_bit_mask = 1ULL << gpio,
         .mode = GPIO_MODE_INPUT,
-        .pull_up_en = GPIO_PULLUP_ENABLE,
+        /* Pull towards the inactive level: a missing sensor reads "not present". */
+        .pull_up_en = active_low ? GPIO_PULLUP_ENABLE : GPIO_PULLUP_DISABLE,
+        .pull_down_en = active_low ? GPIO_PULLDOWN_DISABLE : GPIO_PULLDOWN_ENABLE,
         .intr_type = GPIO_INTR_ANYEDGE,
     };
     ESP_RETURN_ON_ERROR(gpio_config(&cfg), TAG, "gpio_config failed");
@@ -72,7 +76,7 @@ esp_err_t ir_sensor_init(int gpio, ir_sensor_cb_t cb, void *ctx)
                         "isr service install failed");
     ESP_RETURN_ON_ERROR(gpio_isr_handler_add(gpio, gpio_isr, NULL), TAG, "isr add failed");
 
-    ESP_RETURN_ON_FALSE(xTaskCreate(ir_task, "ir_sensor", 3072, NULL, 5, NULL) == pdPASS,
+    ESP_RETURN_ON_FALSE(xTaskCreate(sensor_task, "presence", 3072, NULL, 5, NULL) == pdPASS,
                         ESP_ERR_NO_MEM, TAG, "task create failed");
     return ESP_OK;
 }

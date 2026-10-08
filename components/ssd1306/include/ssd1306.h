@@ -12,12 +12,21 @@ extern "C" {
 #define SSD1306_TEXT_ROWS 8
 #define SSD1306_TEXT_COLS 16
 
+/**
+ * Create an I2C master bus on @p sda_gpio / @p scl_gpio (400 kHz, internal
+ * pull-ups), configure the panel and clear it.
+ * @return ESP_OK, or ESP_ERR_NOT_FOUND when nothing answers at @p i2c_addr.
+ */
 esp_err_t ssd1306_init(int sda_gpio, int scl_gpio, uint8_t i2c_addr);
 
 /** Clear the frame buffer (does not touch the panel until ssd1306_flush()). */
 void ssd1306_clear(void);
 
-/** Draw ASCII @p text on text row @p row (0..7), truncated to 16 characters. */
+/**
+ * Draw ASCII @p text on text row @p row (0..7), truncated to 16 characters.
+ * Only the cells covered by the text are overwritten. Characters outside
+ * printable ASCII are drawn as '?'.
+ */
 void ssd1306_draw_text(int row, const char *text);
 
 /** Send the frame buffer to the panel. */

@@ -10,9 +10,23 @@ menu "IoT node hardware"
         int "DHT11 data GPIO"
         default 4
 
-    config NODE_IR_SENSOR_GPIO
-        int "IR obstacle sensor output GPIO"
+    choice NODE_PRESENCE_SENSOR_TYPE
+        prompt "Presence sensor type"
+        default NODE_PRESENCE_SENSOR_PIR
+        help
+            Sets the active level of the presence sensor output.
+
+        config NODE_PRESENCE_SENSOR_PIR
+            bool "HC-SR501 PIR motion sensor (active high)"
+        config NODE_PRESENCE_SENSOR_IR
+            bool "IR obstacle-avoidance module (active low)"
+    endchoice
+
+    config NODE_PRESENCE_SENSOR_GPIO
+        int "Presence sensor output GPIO"
         default 27
+        help
+            GPIO27 is an RTC GPIO, so the sensor can also wake the chip from deep sleep.
 
     config NODE_I2C_SDA_GPIO
         int "OLED I2C SDA GPIO"

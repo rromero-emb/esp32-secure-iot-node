@@ -39,11 +39,11 @@ Se presenta junto a `cra-embedded-linux-demo` con un mensaje común: **arranque 
 
 | Sesión | Entregable | Tareas |
 |---|---|---|
-| 0 ✅ | Esqueleto | Estructura ESP-IDF, Kconfig, `status_led`, `ir_sensor`, stubs de `dht11` y `ssd1306`, CI de compilación, README |
-| 1 | Drivers | DHT11 con RMT (TX pulso de inicio, RX 83 pulsos, checksum); SSD1306 con `i2c_master` (frame buffer de 1 KB, fuente 8×8); comprobar en la placa y hacer foto del montaje |
+| 0 ✅ | Esqueleto | Estructura ESP-IDF, Kconfig, `status_led`, sensor de presencia (PIR), stubs de `dht11` y `ssd1306`, CI de compilación, README |
+| 1 🔧 | Drivers | DHT11 con RMT (TX pulso de inicio, RX 83 pulsos, checksum); SSD1306 con `i2c_master` (frame buffer de 1 KB, fuente 8×8); comprobar en la placa y hacer foto del montaje |
 | 2 | Conectividad | `network_provisioning` por BLE (security 1), MQTT con TLS (`esp-mqtt`), topics `node/<id>/telemetry` y `node/<id>/event`, reconexión; LED con los estados |
 | 3 | OTA | `esp_https_ota`, imágenes firmadas (`CONFIG_SECURE_SIGNED_APPS_NO_SECURE_BOOT`), rollback (`CONFIG_BOOTLOADER_APP_ROLLBACK_ENABLE`) con autocomprobación tras arrancar; probar imagen sin firmar y corrupta |
-| 4 | Bajo consumo y pruebas | *Deep sleep* con temporizador e IR (`ext0`) como fuentes de despertar; medir la corriente (ver nota); tests Unity de los decodificadores (DHT11, fuente); ejecución en QEMU de Espressif dentro de la CI |
+| 4 | Bajo consumo y pruebas | *Deep sleep* con temporizador y PIR (`ext0`, activo a nivel alto) como fuentes de despertar; medir la corriente (ver nota); tests Unity de los decodificadores (DHT11, fuente); ejecución en QEMU de Espressif dentro de la CI |
 | 5 | Evidencias y portfolio | SBOM con `esp-idf-sbom`, informe de CVE en la CI; README final con diagrama y GIF; entrada de portfolio en Upwork |
 
 ## 4. Riesgos y cómo evitarlos

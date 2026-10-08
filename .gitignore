@@ -6,3 +6,6 @@ managed_components/
 .devcontainer/
 *.pem
 *.key
+
+# Local notes, kit material and personal files (never commit)
+tmp/

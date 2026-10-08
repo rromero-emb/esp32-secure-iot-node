@@ -2,16 +2,17 @@
 
 Placa: ESP32 DevKit con módulo ESP-32S (ESP32 clásico, 4 MB de flash). Los pines por defecto se cambian con `idf.py menuconfig` → *IoT node hardware*.
 
-> **Regla general: alimenta todos los módulos a 3V3, no a 5V (VIN).** Los GPIO del ESP32 no toleran 5 V: un módulo alimentado a 5 V devuelve señales de 5 V que pueden dañar el pin.
+> **Regla general: alimenta los módulos a 3V3, no a 5V (VIN).** Los GPIO del ESP32 no toleran 5 V: un módulo alimentado a 5 V puede devolver señales de 5 V que dañan el pin.
+> **Única excepción: el PIR HC-SR501**, que necesita 5 V (VIN) para funcionar, pero tiene su propio regulador y su salida es de 3,3 V.
 
 ## Conexiones
 
 | Módulo | Pin del módulo | Pin de la placa | Sesión |
 |---|---|---|---|
 | LED de estado | (integrado en la placa) | GPIO2 | 0 |
-| Sensor IR de obstáculos | VCC | 3V3 | 0 |
-| | GND | GND | 0 |
+| PIR HC-SR501 | VCC | **VIN (5 V)** | 0 |
 | | OUT | **GPIO27** | 0 |
+| | GND | GND | 0 |
 | DHT11 | VCC (+) | 3V3 | 1 |
 | | DATA (S / OUT) | **GPIO4** | 1 |
 | | GND (−) | GND | 1 |
@@ -22,7 +23,13 @@ Placa: ESP32 DevKit con módulo ESP-32S (ESP32 clásico, 4 MB de flash). Los pin
 
 ## Notas por módulo
 
-- **Sensor IR:** su salida va a 0 cuando detecta un obstáculo (se enciende su LED de "obstacle"). El potenciómetro azul ajusta la distancia de detección; empieza a media vuelta.
+- **PIR HC-SR501** (cúpula blanca):
+  - Los pines van bajo la cúpula, con la serigrafía tapada: quita la cúpula con cuidado para leer VCC / OUT / GND.
+  - Su salida pasa a 1 al detectar movimiento y se queda en 1 un tiempo fijado por el potenciómetro **Tx** (time). Gíralo del todo a la izquierda para el mínimo (~3 s). El otro potenciómetro, **Sx**, es la sensibilidad (alcance).
+  - Jumper de modo: **H** (repetible: la salida sigue en 1 mientras haya movimiento) es el recomendado; **L** da un solo pulso.
+  - Tras alimentarlo necesita **~1 minuto** para estabilizarse: en ese tiempo puede dar disparos falsos.
+  - Después de cada detección queda ciego unos 2-3 s.
+  - Si en tu kit hubiera un sensor IR de obstáculos (activo a nivel bajo, a 3V3), selecciónalo en `menuconfig` → *Presence sensor type*.
 - **DHT11:**
   - Si es **módulo de 3 pines** (sobre una placa pequeña), ya lleva la resistencia de pull-up.
   - Si es el **sensor suelto de 4 pines** (azul, con rejilla), mirando la rejilla de frente: 1 = VCC, 2 = DATA, 3 = sin conexión, 4 = GND. Pon una resistencia de **10 kΩ entre DATA y 3V3**.
